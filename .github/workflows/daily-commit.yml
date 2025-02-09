@@ -2,39 +2,22 @@ name: Daily Commit
 
 on:
   schedule:
-    - cron: '30 2 * * *'  # Runs daily at 02:30 UTC
+    - cron: '0 0 * * *'  # Runs daily at 00:00 UTC
   workflow_dispatch:  # Allows manual triggering
 
-permissions:
-  contents: write  # Ensure GitHub Actions can push changes
-
 jobs:
-  commit:
+  commit_job:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Fetch full history for proper rebasing
 
-      - name: Configure Git
+      - name: Create a Commit (23f2005068@ds.study.iitm.ac.in)
         run: |
-          git config --global user.name "GitHub Actions"
+          echo "Last run: $(date)" > last-run.txt
+          git config --global user.name "GitHub Action"
           git config --global user.email "23f2005068@ds.study.iitm.ac.in"
-
-      - name: Make a Change
-        run: |
-          echo "Last run: $(date)" > last_run.txt  # Always modify the file
-
-      - name: Pull Remote Changes
-        run: |
-          git add .
-          git stash || echo "Nothing to stash"
-          git pull origin main --rebase || echo "No changes to pull"
-          git stash pop || echo "No stashed changes to apply"
-
-      - name: Commit and Push Changes
-        run: |
-          git add last_run.txt
-          git commit -m "Automated daily commit at $(date)" || echo "No changes to commit"
-          git push origin main || echo "Push failed"
+          git add last-run.txt
+          git commit -m "Automated commit from GitHub Action"
+          git push
