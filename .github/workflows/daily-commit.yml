@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for proper rebasing
 
       - name: Configure Git
         run: |
@@ -24,9 +26,21 @@ jobs:
         run: |
           echo "Last run: $(date)" > last_run.txt  # Always modify the file
 
+      - name: Stash Changes (if any)
+        run: |
+          git add .
+          git stash || echo "Nothing to stash"
+
+      - name: Pull Remote Changes
+        run: |
+          git pull origin main --rebase
+
+      - name: Apply Stashed Changes (if any)
+        run: |
+          git stash pop || echo "No stashed changes to apply"
+
       - name: Commit and Push Changes
         run: |
-          git pull origin main --rebase  # Pull remote changes before pushing
           git add last_run.txt
           git commit -m "Automated daily commit at $(date)" || echo "No changes to commit"
           git push origin main
