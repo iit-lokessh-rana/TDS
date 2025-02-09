@@ -25,7 +25,11 @@ jobs:
           echo "Last run: $(date)" > last_run.txt  # Always modify the file
 
       - name: Commit and Push Changes
-        run: |
-          git add last_run.txt
-          git commit -m "Automated daily commit at $(date)" || echo "No changes to commit"
-          git push
+  run: |
+    git config --global user.name "GitHub Actions"
+    git config --global user.email "21******@ds.study.iitm.ac.in"
+    git pull origin main --rebase  # Pull remote changes first
+    git add last_run.txt
+    git commit -m "Automated daily commit at $(date)" || echo "No changes to commit"
+    git push origin main
+
