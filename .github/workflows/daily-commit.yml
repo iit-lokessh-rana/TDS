@@ -20,30 +20,21 @@ jobs:
       - name: Configure Git
         run: |
           git config --global user.name "GitHub Actions"
-          git config --global user.email "21******@ds.study.iitm.ac.in"
+          git config --global user.email "23f2005068@ds.study.iitm.ac.in"
 
       - name: Make a Change
         run: |
           echo "Last run: $(date)" > last_run.txt  # Always modify the file
 
-      - name: Stash Changes (if any)
+      - name: Pull Remote Changes
         run: |
           git add .
           git stash || echo "Nothing to stash"
-
-      - name: Pull Remote Changes
-        run: |
-          git pull origin main --rebase
-
-      - name: Apply Stashed Changes (if any)
-        run: |
+          git pull origin main --rebase || echo "No changes to pull"
           git stash pop || echo "No stashed changes to apply"
 
       - name: Commit and Push Changes
         run: |
           git add last_run.txt
           git commit -m "Automated daily commit at $(date)" || echo "No changes to commit"
-          git push origin main
-
-
-
+          git push origin main || echo "Push failed"
